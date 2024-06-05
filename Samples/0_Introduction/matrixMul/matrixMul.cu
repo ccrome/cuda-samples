@@ -336,7 +336,7 @@ int main(int argc, char **argv) {
   }
 
   // nIter
-  int nIter = 300
+  int nIter = 300;
   if (checkCmdLineFlag(argc, (const char **)argv, "n")) {
     nIter = getCmdLineArgumentInt(argc, (const char **)argv, "n");
   }
