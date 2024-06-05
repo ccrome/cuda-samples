@@ -139,7 +139,7 @@ void ConstantInit(float *data, int size, float val) {
  */
 int MatrixMultiply(int argc, char **argv,
                    int block_size, const dim3 &dimsA,
-                   const dim3 &dimsB) {
+                   const dim3 &dimsB, , int nIter) {
   // Allocate host memory for matrices A and B
   unsigned int size_A = dimsA.x * dimsA.y;
   unsigned int mem_size_A = sizeof(float) * size_A;
@@ -209,8 +209,6 @@ int MatrixMultiply(int argc, char **argv,
   checkCudaErrors(cudaEventRecord(start, stream));
 
   // Execute the kernel
-  int nIter = 300;
-
   for (int j = 0; j < nIter; j++) {
     if (block_size == 16) {
       MatrixMulCUDA<16>
@@ -301,6 +299,7 @@ int main(int argc, char **argv) {
     printf("Usage -device=n (n >= 0 for deviceID)\n");
     printf("      -wA=WidthA -hA=HeightA (Width x Height of Matrix A)\n");
     printf("      -wB=WidthB -hB=HeightB (Width x Height of Matrix B)\n");
+    printf("      -n=nIterations (default 300)\n");
     printf("  Note: Outer matrix dimensions of A & B matrices" \
            " must be equal.\n");
 
@@ -336,6 +335,12 @@ int main(int argc, char **argv) {
     dimsB.y = getCmdLineArgumentInt(argc, (const char **)argv, "hB");
   }
 
+  // nIter
+  int nIter = 300
+  if (checkCmdLineFlag(argc, (const char **)argv, "n")) {
+    nIter = getCmdLineArgumentInt(argc, (const char **)argv, "n");
+  }
+
   if (dimsA.x != dimsB.y) {
     printf("Error: outer matrix dimensions must be equal. (%d != %d)\n",
            dimsA.x, dimsB.y);
@@ -346,7 +351,7 @@ int main(int argc, char **argv) {
          dimsB.x, dimsB.y);
 
   checkCudaErrors(cudaProfilerStart());
-  int matrix_result = MatrixMultiply(argc, argv, block_size, dimsA, dimsB);
+  int matrix_result = MatrixMultiply(argc, argv, block_size, dimsA, dimsB, nIter);
   checkCudaErrors(cudaProfilerStop());
 
   exit(matrix_result);
