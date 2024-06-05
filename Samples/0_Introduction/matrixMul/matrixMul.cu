@@ -139,7 +139,7 @@ void ConstantInit(float *data, int size, float val) {
  */
 int MatrixMultiply(int argc, char **argv,
                    int block_size, const dim3 &dimsA,
-                   const dim3 &dimsB, , int nIter) {
+                   const dim3 &dimsB, int nIter) {
   // Allocate host memory for matrices A and B
   unsigned int size_A = dimsA.x * dimsA.y;
   unsigned int mem_size_A = sizeof(float) * size_A;
